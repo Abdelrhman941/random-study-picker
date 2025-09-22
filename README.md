@@ -1,5 +1,5 @@
-# **Random Study Tool**
-A **single-page HTML app** for organizing and focusing on study tasks. No setup required — just open the file in your browser.
+# [**Random Study Tool**](https://abdelrhman941.github.io/random-study-picker/)
+A **single-page HTML app** for organizing and focusing on study tasks.
 
 ![Random Study Tool](https://i.postimg.cc/65T19Xv5/image.png)
 
