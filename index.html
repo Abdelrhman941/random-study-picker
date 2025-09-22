@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Study Tool</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+    <style>
+        :root {
+            --bg-primary: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            --bg-secondary: rgba(25, 25, 45, 0.95);
+            --bg-tertiary: rgba(30, 30, 60, 0.8);
+            --bg-item: rgba(40, 40, 70, 0.6);
+            --bg-item-hover: rgba(50, 50, 80, 0.7);
+            --bg-shortcuts: rgba(30, 30, 60, 0.6);
+            --bg-shortcuts-hover: rgba(40, 40, 70, 0.7);
+            --text-primary: #e0e6ed;
+            --text-secondary: #8892b0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --border-focus: #667eea;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-danger: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            --gradient-success: linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%);
+            --shadow-color: rgba(0, 0, 0, 0.3);
+            --selected-bg: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            --selected-border: rgba(102, 126, 234, 0.4);
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            --bg-secondary: rgba(255, 255, 255, 0.95);
+            --bg-tertiary: rgba(248, 250, 252, 0.9);
+            --bg-item: rgba(241, 245, 249, 0.8);
+            --bg-item-hover: rgba(226, 232, 240, 0.9);
+            --bg-shortcuts: rgba(248, 250, 252, 0.8);
+            --bg-shortcuts-hover: rgba(241, 245, 249, 0.9);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: rgba(0, 0, 0, 0.1);
+            --border-focus: #3b82f6;
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-success: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --selected-bg: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            --selected-border: rgba(59, 130, 246, 0.3);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px var(--shadow-color);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        h1 {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 50px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-primary);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .theme-toggle:hover {
+            border-color: var(--border-focus);
+            transform: translateY(-2px);
+        }
+        .input-section {
+            margin-bottom: 30px;
+        }
+        .input-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 15px 20px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        input[type="text"]:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+        input[type="text"]::placeholder {
+            color: var(--text-secondary);
+        }
+        .btn {
+            padding: 12px 25px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn-danger {
+            background: var(--gradient-danger);
+        }
+        .btn-danger:hover {
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+        .btn-success {
+            background: var(--gradient-success);
+        }
+        .btn-success:hover {
+            box-shadow: 0 8px 25px rgba(0, 210, 211, 0.4);
+        }
+        .random-section {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--bg-tertiary);
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .selected-item {
+            background: var(--bg-item);
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 2px solid var(--border-color);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .study-list {
+            margin-bottom: 30px;
+        }
+        .study-item {
+            background: var(--bg-item);
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        .study-item:hover {
+            background: var(--bg-item-hover);
+            transform: translateX(5px);
+        }
+        .study-item.selected {
+            background: var(--selected-bg);
+            border-color: var(--selected-border);
+        }
+        .delete-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+        .delete-btn:hover {
+            background: #ff3742;
+            transform: scale(1.05);
+        }
+        .shortcuts-header {
+            background: var(--bg-shortcuts);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        .shortcuts-header:hover {
+            background: var(--bg-shortcuts-hover);
+        }
+        .shortcuts-header h3 {
+            color: var(--text-primary);
+            margin: 0;
+            font-size: 16px;
+        }
+        .shortcuts {
+            background: var(--bg-shortcuts);
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 5px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .shortcut-item {
+            margin-bottom: 5px;
+        }
+        .key {
+            background: var(--selected-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--text-primary);
+        }
+        .empty-state {
+            text-align: center;
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 40px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Random Study Tool</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <span id="theme-icon">🌙</span>
+                <span id="theme-text">Dark</span>
+            </button>
+        </div>
+        
+        <div class="input-section">
+            <div class="input-container">
+                <input type="text" id="studyInput" placeholder="Enter something to study..." />
+            </div>
+            <button class="btn" onclick="addStudyItem()">Add to Study List</button>
+            <button class="btn btn-success" onclick="saveToFile()">💾 Save</button>
+            <button class="btn" onclick="document.getElementById('fileInput').click()">📂 Load</button>
+            <button class="btn btn-danger" onclick="clearAll()">Clear All</button>
+            <input type="file" id="fileInput" accept=".json" style="display: none;" onchange="loadFromFile(event)">
+        </div>
+        <div class="random-section">
+            <button class="btn btn-success" onclick="selectRandom()">🎲 Pick Random Study Item</button>
+            <div id="selectedItem" class="selected-item">
+                Ready to study!
+            </div>
+        </div>
+        
+        <div class="study-list">
+            <h3>Study Items (<span id="itemCount">0</span>)</h3>
+            <div id="studyItems"></div>
+        </div>
+    </div>
+    <script>
+        let studyItems = [];
+        let currentSelected = null;
+        // Theme management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeButton();
+        }
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateThemeButton();
+        }
+        function updateThemeButton() {
+            const theme = document.documentElement.getAttribute('data-theme');
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            
+            if (theme === 'dark') {
+                icon.textContent = '🌙';
+                text.textContent = 'Dark';
+            } else {
+                icon.textContent = '☀️';
+                text.textContent = 'Light';
+            }
+        }
+        // Load data from memory on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            updateDisplay();
+            document.getElementById('studyInput').focus();
+        });
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.target.tagName === 'INPUT') {
+                if (e.key === 'Enter') {
+                    addStudyItem();
+                } else if (e.key === 'Escape') {
+                    document.getElementById('studyInput').value = '';
+                }
+                return;
+            }
+            
+            switch(e.key) {
+                case ' ':
+                    e.preventDefault();
+                    selectRandom();
+                    break;
+                case 'Delete':
+                    clearAll();
+                    break;
+            }
+        });
+        function addStudyItem() {
+            const input = document.getElementById('studyInput');
+            const text = input.value.trim();
+            
+            if (text && !studyItems.includes(text)) {
+                studyItems.push(text);
+                input.value = '';
+                updateDisplay();
+                
+                // Add a subtle animation
+                const itemsContainer = document.getElementById('studyItems');
+                const lastItem = itemsContainer.lastElementChild;
+                if (lastItem) {
+                    lastItem.style.transform = 'translateX(-20px)';
+                    lastItem.style.opacity = '0';
+                    setTimeout(() => {
+                        lastItem.style.transform = 'translateX(0)';
+                        lastItem.style.opacity = '1';
+                    }, 100);
+                }
+            }
+            input.focus();
+        }
+        function deleteItem(index) {
+            studyItems.splice(index, 1);
+            updateDisplay();
+            
+            // If we deleted the currently selected item, clear the selection
+            if (currentSelected && studyItems.indexOf(currentSelected) === -1) {
+                currentSelected = null;
+                document.getElementById('selectedItem').innerHTML = 'Click "Pick Random Study Item" to get started!';
+            }
+        }
+        function selectRandom() {
+            if (studyItems.length === 0) {
+                document.getElementById('selectedItem').innerHTML = 
+                    '<div class="empty-state">Add some study items first!</div>';
+                return;
+            }
+            
+            const randomIndex = Math.floor(Math.random() * studyItems.length);
+            currentSelected = studyItems[randomIndex];
+            
+            const selectedDiv = document.getElementById('selectedItem');
+            selectedDiv.style.transform = 'scale(0.9)';
+            selectedDiv.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                selectedDiv.innerHTML = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; margin-bottom: 10px;">📚</div>
+                        <div>${currentSelected}</div>
+                    </div>
+                `;
+                selectedDiv.style.transform = 'scale(1)';
+                selectedDiv.style.opacity = '1';
+            }, 200);
+            
+            updateDisplay();
+        }
+        function clearAll() {
+            if (studyItems.length > 0 && confirm('Are you sure you want to clear all study items?')) {
+                studyItems = [];
+                currentSelected = null;
+                document.getElementById('selectedItem').innerHTML = 'Ready to study! Add items above and click the button.';
+                updateDisplay();
+            }
+        }
+        function saveToFile() {
+            if (studyItems.length === 0) {
+                alert('No study items to save! Add some items first.');
+                return;
+            }
+            const data = {
+                studyItems: studyItems,
+                savedDate: new Date().toISOString(),
+                totalItems: studyItems.length
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `study-items-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        function loadFromFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!file.name.endsWith('.json')) {
+                console.error('Invalid file type. Please select a JSON file.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    if (data.studyItems && Array.isArray(data.studyItems)) {
+                        const confirmLoad = studyItems.length > 0 ? 
+                            confirm(`This will replace your current ${studyItems.length} items with ${data.studyItems.length} items from the file. Continue?`) :
+                            true;
+                        
+                        if (confirmLoad) {
+                            studyItems = [...data.studyItems];
+                            currentSelected = null;
+                            document.getElementById('selectedItem').innerHTML = 'Ready to study! Add items above and click the button.';
+                            updateDisplay();
+                        }
+                    } else {
+                        console.error('Invalid file format. File must contain a studyItems array.');
+                    }
+                } catch (error) {
+                    console.error('Error reading file:', error);
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset the file input so the same file can be selected again
+            event.target.value = '';
+        }
+        function toggleShortcuts() {
+            const shortcuts = document.getElementById('shortcuts');
+            const header = document.querySelector('.shortcuts-header h3');
+            
+            if (shortcuts.style.display === 'none') {
+                shortcuts.style.display = 'block';
+                header.textContent = '▼ Keyboard Shortcuts';
+            } else {
+                shortcuts.style.display = 'none';
+                header.textContent = '▶ Keyboard Shortcuts';
+            }
+        }
+        function updateDisplay() {
+            const itemsContainer = document.getElementById('studyItems');
+            const countSpan = document.getElementById('itemCount');
+            
+            countSpan.textContent = studyItems.length;
+            
+            if (studyItems.length === 0) {
+                itemsContainer.innerHTML = '<div class="empty-state">No study items yet. Add some above!</div>';
+                return;
+            }
+            
+            itemsContainer.innerHTML = studyItems.map((item, index) => `
+                <div class="study-item ${item === currentSelected ? 'selected' : ''}">
+                    <span>${item}</span>
+                    <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>
